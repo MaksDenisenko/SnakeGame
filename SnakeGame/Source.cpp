@@ -73,7 +73,19 @@ int main() {
 
 	int currentLength = 0;
 
+	int fruitX, fruitY;
+	fruitX = rand() % fieldWidth;
+	fruitY = rand() % fieldHeight;
+
+	snakePiece* snakeCurrent = sneakHead;
+
+	int snakeXprev, snakeYprev;
+	int length = 0;
+
 	while (lively) {
+		snakeXprev = snake.x;
+		snakeYprev = snake.y;
+
 		symbol = _getch();
 		
 		if (symbol == 'w') {
@@ -90,9 +102,46 @@ int main() {
 			snake.x -= 1;
 			if (snake.x < 0) snake.x = fieldWidth - 1;
 		}
-		snakePiece* snakeCurrent = sneakHead;
+
+		if ((snake.x == fruitX) && (snake.y == fruitY)) {
+			do {
+				fruitX = rand() % fieldWidth;
+				fruitY = rand() % fieldHeight;
+				
+			} while (field[fruitX][fruitY] != ' ');
+
+			snakeCurrent = sneakHead;
+
+			while (snakeCurrent->next != NULL) snakeCurrent = snakeCurrent->next;
+			snakeCurrent->next = new snakePiece;
+			snakeCurrent->next->x = snakeXprev;
+			snakeCurrent->next->y = snakeYprev;
+			snakeCurrent->next->prev = snakeCurrent;
+			snakeCurrent->next->next = NULL;
+			length++;
+		}
+
+		snakeCurrent = sneakHead;
+
+		if (length >= 1) {
+			while (snakeCurrent->next != NULL) snakeCurrent = snakeCurrent->next;
+			while (snakeCurrent != sneakHead->next) {
+				snakeCurrent->x = snakeCurrent->prev->x;
+				snakeCurrent->y = snakeCurrent->prev->y;
+				snakeCurrent = snakeCurrent->prev;
+			}
+			snakeCurrent->x = snakeXprev;
+			snakeCurrent->y = snakeYprev;
+		}
+
+		
+
+		snakeCurrent = sneakHead;
 		currentLength = 0;
 		clearField(field, fieldHeight, fieldWidth);
+
+		field[fruitY][fruitX] = '*';
+
 		while (snakeCurrent != NULL) {
 			if (currentLength == 0) field[snakeCurrent->y][snakeCurrent->x] = 'O';
 			else field[snakeCurrent->y][snakeCurrent->x] = '@';
