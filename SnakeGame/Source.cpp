@@ -14,7 +14,10 @@ void printField(char** field, int fieldHeight, int fieldWidth) {
 		for (int j = 0; j < fieldWidth; j++) {
 			cout << field[i][j];
 		}
-		cout << endl;
+		cout << "|\n";
+	}
+	for (int i = 0; i < fieldWidth; i++) {
+		cout << "-";
 	}
 }
 
@@ -103,6 +106,20 @@ int main() {
 			if (snake.x < 0) snake.x = fieldWidth - 1;
 		}
 
+		snakeCurrent = sneakHead;
+
+		if (length > 1) {
+			snakeCurrent = snakeCurrent->next;
+			while (snakeCurrent->next != NULL) {
+				if (field[snake.y][snake.x] == '@') {
+					lively = false;
+					break;
+				}
+				snakeCurrent = snakeCurrent->next;
+			}
+		}
+
+
 		if ((snake.x == fruitX) && (snake.y == fruitY)) {
 			do {
 				fruitX = rand() % fieldWidth;
@@ -152,6 +169,8 @@ int main() {
 		system("cls");
 		printField(field, fieldHeight, fieldWidth);
 	}
+
+	cout << "Игра закончена! Ваш результат: " << length << endl;
 
 	return 0;
 }
